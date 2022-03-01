@@ -20,12 +20,12 @@ services:
     container_name: victoriametrics
     image: victoriametrics/victoria-metrics
     expose:
-      - 8428:8428
-      - 8089:8089
-      - 8089:8089/udp
-      - 2003:2003
-      - 2003:2003/udp
-      - 4242:4242
+      - 8428
+      - 8089
+      - 8089/udp
+      - 2003
+      - 2003/udp
+      - 4242
     volumes:
       - ./vmdata:/storage
     command:
@@ -40,7 +40,7 @@ services:
     restart: always
   grafana:
     container_name: grafana
-    image: grafana/grafana:8.3.5
+    image: grafana/grafana:latest
     depends_on:
       - "victoriametrics"
     ports:
