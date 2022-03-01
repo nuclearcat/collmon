@@ -7,8 +7,6 @@ MAINTAINER Denys Fedoryshchenko <collectddocker+nuclearcat@nuclearcat.com>
 # Install common softwares
 ENV DEBIAN_FRONTEND noninteractive
 
-# Setup our collectd
-ADD ["configs", "/tmp/"]
 
 # Install all apt-get utils and required repos
 RUN apt-get update \
@@ -42,6 +40,9 @@ RUN apt-get update \
 
 # Add in startup script
 ADD ["run.sh", "/.docker/"]
+
+# Setup our collectd
+ADD ["configs/*", "/tmp/"]
 
 # Set correct permissions on startup script
 RUN chmod +x /.docker/run.sh
