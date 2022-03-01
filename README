@@ -4,3 +4,5 @@ Start: docker-compose up
 Stop (and lose some data): docker-compose down
 
 Clean up (WITH DATA!!!): git clean -fd
+
+To configure external hosts, check for external-example/collectd.conf
