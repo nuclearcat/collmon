@@ -6,3 +6,5 @@ Stop (and lose some data): docker-compose down
 Clean up (WITH DATA!!!): git clean -fd
 
 To configure external hosts, check for external-example/collectd.conf
+!!!! Attention on --no-install-recommends, otherwise in ubuntu it might install full desktop.
+apt install --no-install-recommends collectd
