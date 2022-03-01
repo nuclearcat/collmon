@@ -1,1 +1,6 @@
 Largely based on https://github.com/VictoriaMetrics/VictoriaMetrics
+
+Start: docker-compose up
+
+
+Clean up (WITH DATA!!!): git clean -fd
