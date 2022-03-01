@@ -19,7 +19,7 @@ services:
   victoriametrics:
     container_name: victoriametrics
     image: victoriametrics/victoria-metrics
-    ports:
+    expose:
       - 8428:8428
       - 8089:8089
       - 8089:8089/udp
@@ -91,6 +91,8 @@ services:
   collectd:
     container_name: collectd
     image:  nuclearcat/collectd
+    depends_on:
+      - "victoriametrics"
     volumes:
       - ./collectd:/etc/collectd
     command:
