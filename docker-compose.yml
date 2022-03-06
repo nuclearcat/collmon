@@ -46,7 +46,7 @@ services:
     ports:
       - 3000:3000
     volumes:
-      - ./grafanadata:/var/lib/grafana
+      - grafana:/var/lib/grafana
       - ./provisioning/:/etc/grafana/provisioning/
       - ./dashboards/victoriametrics.json:/var/lib/grafana/dashboards/vm.json
       - ./dashboards/vmagent.json:/var/lib/grafana/dashboards/vmagent.json
@@ -102,3 +102,5 @@ services:
     restart: always
 networks:
   vm_net:
+volumes:
+  grafana:
