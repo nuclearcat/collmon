@@ -19,13 +19,13 @@ services:
   victoriametrics:
     container_name: victoriametrics
     image: victoriametrics/victoria-metrics
-    ports:
-      - 8428:8428
-      - 8089:8089
-      - 8089:8089/udp
-      - 2003:2003
-      - 2003:2003/udp
-      - 4242:4242
+    expose:
+      - 8428
+      - 8089
+      - 8089/udp
+      - 2003
+      - 2003/udp
+      - 4242
     volumes:
       - ./vmdata:/storage
     command:
@@ -40,17 +40,17 @@ services:
     restart: always
   grafana:
     container_name: grafana
-    image: grafana/grafana:8.3.5
+    image: grafana/grafana:latest
     depends_on:
       - "victoriametrics"
     ports:
       - 3000:3000
     volumes:
-      - grafana:/var/lib/grafana
+      - grafanadata:/var/lib/grafana
       - ./provisioning/:/etc/grafana/provisioning/
-      - ./dashboards/victoriametrics.json:/var/lib/grafana/dashboards/vm.json
-      - ./dashboards/vmagent.json:/var/lib/grafana/dashboards/vmagent.json
-      - ./dashboards/vmalert.json:/var/lib/grafana/dashboards/vmalert.json
+#      - ./dashboards/victoriametrics.json:/var/lib/grafana/dashboards/vm.json
+#      - ./dashboards/vmagent.json:/var/lib/grafana/dashboards/vmagent.json
+#      - ./dashboards/vmalert.json:/var/lib/grafana/dashboards/vmalert.json
     networks:
       - vm_net
     restart: always
@@ -91,6 +91,8 @@ services:
   collectd:
     container_name: collectd
     image:  nuclearcat/collectd
+    depends_on:
+      - "victoriametrics"
     volumes:
       - ./collectd:/etc/collectd
     command:
@@ -100,7 +102,22 @@ services:
     networks:
       - vm_net
     restart: always
+  blackboxexporter:
+    container_name: blackboxexporter
+    privileged: true
+    image: prom/blackbox-exporter
+    depends_on:
+      - "victoriametrics"
+    ports:
+      - 9115:9115
+    volumes:
+      - ./blackbox-exporter:/config
+    command: 
+      - '--config.file=/config/blackbox.yml'
+    networks:
+      - vm_net
+
 networks:
   vm_net:
 volumes:
-  grafana:
+  grafanadata: {}

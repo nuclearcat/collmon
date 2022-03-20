@@ -11,3 +11,18 @@ scrape_configs:
   - job_name: 'victoriametrics'
     static_configs:
       - targets: ['victoriametrics:8428']
+  - job_name: 'blackboxexporter'
+    metrics_path: /probe
+    params:
+      module: [http_2xx]  # Look for a HTTP 200 response.
+    static_configs:
+      - targets:
+        - https://collabora.com
+        - https://kernelci.org
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackboxexporter:9115  # The blackbox exporter's real hostname:port.
