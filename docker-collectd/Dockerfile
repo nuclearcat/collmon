@@ -22,6 +22,7 @@ RUN apt-get update \
         jq \
         unzip \
         python3-pip \
+        snmp-mibs-downloader \
     # Uninstall helper packages
     && apt-get --purge -y remove \
         software-properties-common \
