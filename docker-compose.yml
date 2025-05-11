@@ -2,7 +2,7 @@ version: '3.5'
 services:
   vmagent:
     container_name: vmagent
-    image: victoriametrics/vmagent
+    image: victoriametrics/vmagent:stable
     depends_on:
       - "victoriametrics"
     ports:
@@ -18,7 +18,7 @@ services:
     restart: always
   victoriametrics:
     container_name: victoriametrics
-    image: victoriametrics/victoria-metrics
+    image: victoriametrics/victoria-metrics:stable
     expose:
       - 8428
       - 8089
@@ -56,7 +56,7 @@ services:
     restart: always
   vmalert:
     container_name: vmalert
-    image: victoriametrics/vmalert
+    image: victoriametrics/vmalert:stable
     depends_on:
       - "victoriametrics"
       - "alertmanager"
@@ -76,6 +76,7 @@ services:
     networks:
       - vm_net
     restart: always
+
   alertmanager:
     container_name: alertmanager
     image:  prom/alertmanager
@@ -88,6 +89,7 @@ services:
     networks:
       - vm_net
     restart: always
+
   collectd:
     container_name: collectd
     image:  nuclearcat/collectd
@@ -102,6 +104,7 @@ services:
     networks:
       - vm_net
     restart: always
+
   blackboxexporter:
     container_name: blackboxexporter
     privileged: true
@@ -116,6 +119,37 @@ services:
       - '--config.file=/config/blackbox.yml'
     networks:
       - vm_net
+
+  usnmpexporter:
+    container_name: usnmpexporter
+    image: nuclearcat/usnmp_exporter
+    depends_on:
+      - "victoriametrics"
+    restart: always
+    volumes:
+      - './usnmp_exporter.yml:/etc/usnmp_exporter.yml'
+    command:
+      - '/usr/local/bin/usnmp_exporter'
+      - '-config=/etc/usnmp_exporter.yml'
+      - '-verbose'
+
+  sflowdecode:
+    container_name: sflowdecode
+    image: nuclearcat/sflow-decode
+    depends_on:
+      - "victoriametrics"
+    restart: always
+    volumes:
+      - './sflowdecode:/sflowdecode'
+    entrypoint:
+      - '/usr/local/bin/sflow-decode'
+      - '-r'
+      - '/sflowdecode/ruleset_production'
+      - '-l'
+      - '9099'
+#      - '-v'
+    ports:
+      - 6343:6343/udp
 
 networks:
   vm_net:
