@@ -127,10 +127,10 @@ services:
       - "victoriametrics"
     restart: always
     volumes:
-      - './usnmp_exporter.yml:/etc/usnmp_exporter.yml'
+      - './usnmp_exporter:/etc/usnmp_exporter'
     command:
       - '/usr/local/bin/usnmp_exporter'
-      - '-config=/etc/usnmp_exporter.yml'
+      - '-config=/etc/usnmp_exporter/usnmp_exporter.yml'
       - '-verbose'
 
   sflowdecode:
