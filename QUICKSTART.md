@@ -9,8 +9,21 @@ Install latest ubuntu (at least 24.04) on your server or VM.
 sudo apt update && sudo apt upgrade -y
 ```
 
-- Install latest Docker and Docker Compose v2:
+- Install required packages:
+```bash
+sudo apt install -y \
+  git \
+  curl \
+  wget
+```
 
+- Clone this repository and navigate into it:
+```bash
+git clone https://github.com/nuclearcat/collmon
+cd collmon
+```
+
+- Install latest Docker and Docker Compose v2:
 ```bash
 sudo scripts/composev2install.sh
 ```
@@ -26,10 +39,8 @@ docker --version
 docker compose version
 ```
 
-## Clone this repository
-
+- Enter the `collmon` directory again if needed:
 ```bash
-git clone https://github.com/nuclearcat/collmon
 cd collmon
 ```
 
