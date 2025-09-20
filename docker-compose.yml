@@ -132,6 +132,9 @@ services:
       - '/usr/local/bin/usnmp_exporter'
       - '-config=/etc/usnmp_exporter/usnmp_exporter.yml'
       - '-verbose'
+    networks:
+      - vm_net
+
 
   sflowdecode:
     container_name: sflowdecode
@@ -150,6 +153,9 @@ services:
 #      - '-v'
     ports:
       - 6343:6343/udp
+    networks:
+      - vm_net
+
 
 networks:
   vm_net:
