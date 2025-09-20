@@ -1,6 +1,8 @@
 # How to start fast with this monitoring stack
 
-## Initial Server and software setup
+## Installation and configuration guide
+
+### Initial Server and software setup
 
 Install latest ubuntu (at least 24.04) on your server or VM.
 
@@ -44,17 +46,17 @@ docker compose version
 cd collmon
 ```
 
-## Start the monitoring stack
+### Start the monitoring stack
 
 ```bash
 docker compose up -d
 ```
 You should see all containers are first pulling latest images, then starting.
 
-## Access the web interfaces
+### Access the web interfaces
 - Grafana: http://YOUR_SERVER_IP:3000 (default user/pass: admin/admin - you will be prompted to change it on first login)
 
-## Configure your devices to be monitored (SNMP)
+### Configure your devices to be monitored (SNMP)
 - Edit the `usnmp_exporter/usnmp_exporter.yml` file to add your devices and their SNMP community strings.
 - Restart the usnmp_exporter container to apply changes after editing the config file:
 ```bash
@@ -118,7 +120,7 @@ This means we will monitor two devices (10.1.1.1 and 10.1.1.2) with their respec
 First device we will also monitor extended interface stats and some custom OIDs with tags for better identification in Grafana.
 Second device we will monitor only basic interface stats and Broadcast packets on interfaces.
 
-# 10) Grafana tips and tricks
+### Grafana tips and tricks
 
 To add new monitoring jobs, like usnmpexporter, to Grafana dashboards, follow these steps:
 1. Open Grafana in your web browser and log in.
@@ -128,7 +130,7 @@ To add new monitoring jobs, like usnmpexporter, to Grafana dashboards, follow th
 5. Use the metrics browser to find the specific metrics you want to visualize.
 6. Customize the visualization settings as needed.
 
-# 11) Useful Docker commands
+### Useful Docker commands
 - View running containers:
 ```bash
 docker ps
@@ -150,7 +152,7 @@ docker stop <container_id>
 docker rm <container_id>
 ```
 
-# 12) Useful Docker Compose commands
+### Useful Docker Compose commands
 - View status of all services:
 ```bash
 docker compose ps
@@ -175,4 +177,52 @@ docker compose restart
 ```bash
 docker compose up -d
 ```
+
+## Troubleshooting
+
+
+### SNMP connectivity issues
+
+- If you encounter issues with usnmp_exporter not collecting data, ensure that your devices are reachable via SNMP from the server running the monitoring stack.
+You can monitor SNMP connectivity using the `snmpwalk` command:
+```bash
+snmpwalk -v 2c -c public 10.1.1.1
+```
+
+If it says command not found, install it (and MIBs) using:
+```bash
+sudo apt install snmp snmp-mibs-downloader
+```
+
+- You can also check traffic on UDP port 161 using tcpdump:
+```bash
+sudo tcpdump -i any udp port 161
+```
+You should see SNMP requests and responses if SNMP is working correctly.
+
+If tcpdump is not installed, install it using:
+```bash
+sudo apt install tcpdump
+```
+
+### Grafana issues
+- If Grafana is not accessible, ensure that the Grafana container is running:
+```bash
+docker compose ps
+```
+- Check Grafana logs for any errors:
+```bash
+docker compose logs grafana
+```
+
+### Data is not appearing in Grafana dashboards
+- Ensure that Prometheus is scraping the usnmp_exporter metrics correctly. Check Prometheus(Victoriametrics) agent logs:
+```bash
+docker compose logs vmagent
+```
+- Verify that the usnmp_exporter is running and accessible:
+```bash
+docker compose logs usnmpexporter
+```
+
 
