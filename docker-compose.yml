@@ -90,20 +90,20 @@ services:
       - vm_net
     restart: always
 
-  collectd:
-    container_name: collectd
-    image:  nuclearcat/collectd
-    depends_on:
-      - "victoriametrics"
-    volumes:
-      - ./collectd:/etc/collectd
-    command:
-      - '/.docker/run.sh'
-    ports:
-      - 25826:25826/udp
-    networks:
-      - vm_net
-    restart: always
+  #collectd:
+  #  container_name: collectd
+  #  image:  nuclearcat/collectd
+  #  depends_on:
+  #    - "victoriametrics"
+  #  volumes:
+  #    - ./collectd:/etc/collectd
+  #  command:
+  #    - '/.docker/run.sh'
+  #  ports:
+  #    - 25826:25826/udp
+  #  networks:
+  #    - vm_net
+  #  restart: always
 
   blackboxexporter:
     container_name: blackboxexporter
