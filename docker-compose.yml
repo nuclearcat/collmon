@@ -150,6 +150,7 @@ services:
       - '/sflowdecode/ruleset_production'
       - '-l'
       - '9099'
+      - '-d'
 #      - '-v'
     ports:
       - 6343:6343/udp
