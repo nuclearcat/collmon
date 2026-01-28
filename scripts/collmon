@@ -17,8 +17,11 @@ show_help() {
     echo "Usage: collmon <command>"
     echo ""
     echo "Commands:"
-    echo "  update    Pull latest images and restart containers"
-    echo "  help      Show this help message"
+    echo "  update        Pull latest images and restart containers"
+    echo "  fixdocker     Install Docker Compose v2 if not available"
+    echo "  listservices  List available services"
+    echo "  shell <svc>   Open a shell in a running service"
+    echo "  help          Show this help message"
     echo ""
 }
 
@@ -30,10 +33,49 @@ cmd_update() {
     echo "Update complete."
 }
 
+cmd_fixdocker() {
+    if docker compose version &>/dev/null; then
+        echo "Docker Compose v2 is already available."
+        docker compose version
+    else
+        echo "Docker Compose v2 not found. Installing..."
+        if [[ $EUID -ne 0 ]]; then
+            sudo "$SCRIPT_DIR/composev2install.sh"
+        else
+            "$SCRIPT_DIR/composev2install.sh"
+        fi
+    fi
+}
+
+cmd_listservices() {
+    cd "$PROJECT_ROOT"
+    docker compose config --services
+}
+
+cmd_shell() {
+    if [[ -z "${1:-}" ]]; then
+        echo "Usage: collmon shell <service>"
+        echo ""
+        echo "Hint: Run 'collmon listservices' to see available services."
+        exit 1
+    fi
+    cd "$PROJECT_ROOT"
+    docker compose exec "$1" /bin/sh
+}
+
 # Main command handler
 case "${1:-}" in
     update)
         cmd_update
+        ;;
+    fixdocker)
+        cmd_fixdocker
+        ;;
+    listservices)
+        cmd_listservices
+        ;;
+    shell)
+        cmd_shell "${2:-}"
         ;;
     help|--help|-h|"")
         show_help
